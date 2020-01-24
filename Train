@@ -1,0 +1,5 @@
+optimizers.Adam(lr=.1)
+model21 .compile(loss='categorical_crossentropy', optimizer='adam',
+             metrics=['accuracy'])
+history =model21.fit(X_train, y_train, validation_split=0.2,
+                   epochs=25, batch_size=32, shuffle="true")
