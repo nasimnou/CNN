@@ -6,4 +6,5 @@ The learning process is done from scratch and without using pre-trained models.
 
 
 It gets to 81% validation accuracy in 6 epochs. 
+
 ![model_sum](https://github.com/nasimnou/CNN/blob/master/cifar%20_80%25accuracy.png)
