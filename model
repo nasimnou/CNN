@@ -1,0 +1,79 @@
+input_layer = Input(shape=(32,32,3))
+
+
+M=BatchNormalization()(input_layer)
+Main=Conv2D(16, (3, 3), padding='same')(M)
+
+l=BatchNormalization()(Main)
+l=LeakyReLU(alpha=0.1)(l)
+l=Conv2D(16, (3, 3), padding='same')(l)
+
+add_M= layers.Concatenate(axis=-1)([Main,l])
+
+
+l1=BatchNormalization()(add_M)
+l1=LeakyReLU(alpha=0.1)(l1)
+l1=Conv2D(32, (1, 1), padding='same')(l1)
+l1=MaxPooling2D(pool_size=(2,2))(l1)
+l1=BatchNormalization()(l1)
+l1=LeakyReLU(alpha=0.1)(l1)
+l1=Conv2D(64, (3, 3), padding='same')(l1)
+
+l1=BatchNormalization()(l1)
+l1=LeakyReLU(alpha=0.1)(l1)
+l1=Conv2D(128, (3, 3), padding='same')(l1)
+l1=MaxPooling2D(pool_size=(2,2))(l1)
+l1=BatchNormalization()(l1)
+l1=LeakyReLU(alpha=0.1)(l1)
+l1=Conv2D(256, (1, 1), padding='same')(l1)
+
+
+
+
+l2=BatchNormalization()(add_M)
+l2=LeakyReLU(alpha=0.1)(l2)
+l2=Conv2D(32, (3, 3), padding='same')(l2)
+l2=MaxPooling2D(pool_size=(2,2))(l2)
+l2=BatchNormalization()(l2)
+l2=LeakyReLU(alpha=0.1)(l2)
+l2=Conv2D(64, (1, 1), padding='same')(l2)
+
+
+l2=BatchNormalization()(l2)
+l2=LeakyReLU(alpha=0.1)(l2)
+l2=Conv2D(128, (1, 1), padding='same')(l2)
+l2=MaxPooling2D(pool_size=(2,2))(l2)
+l2=BatchNormalization()(l2)
+l2=LeakyReLU(alpha=0.1)(l2)
+l2=Conv2D(256, (3, 3), padding='same')(l2)
+
+
+
+add_L= layers.Concatenate(axis=-1)([l1,l2])
+add_L=BatchNormalization()(add_L)
+add_L=LeakyReLU(alpha=0.1)(add_L)
+add_L=Conv2D(256, (3, 3), padding='same')(add_L)
+add_L=BatchNormalization()(add_L)
+add_L=LeakyReLU(alpha=0.1)(add_L)
+add_L=UpSampling2D(size=(4, 4), data_format=None, interpolation='nearest')(add_L)
+
+
+add_M= layers.Concatenate(axis=-1)([Main,add_L])
+l=BatchNormalization()(add_M)
+l=LeakyReLU(alpha=0.1)(l)
+Max=MaxPooling2D(pool_size=(2,2))(l)
+drop=Dropout(0.35)(l)
+
+
+
+mergedOut = Flatten()(drop) 
+mergedOut=Dense(256)(mergedOut)
+mergedOut=BatchNormalization()(mergedOut)
+mergedOut=LeakyReLU(alpha=0.1)(mergedOut)
+mergedOut=Dropout(0.5)(mergedOut)
+mergedOut=Dense(64)(mergedOut)
+BT5=BatchNormalization()(mergedOut)
+mergedOut=LeakyReLU(alpha=0.1)(mergedOut)
+output_layer = Dense(10, activation='softmax')(mergedOut)
+
+model21 = Model(input_layer, output_layer)
